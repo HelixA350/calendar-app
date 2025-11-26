@@ -1,6 +1,10 @@
 from fastapi import FastAPI
 from app.api import router
+from app.database import create_tables
 
+
+# Create database tables on startup
+create_tables()
 
 app = FastAPI(
     title="Work and Vacation Planning API",
