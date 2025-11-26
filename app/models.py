@@ -1,6 +1,7 @@
 from datetime import date
 from typing import List
 from pydantic import BaseModel
+from typing import Literal
 
 
 class EmployeeInfo(BaseModel):
@@ -9,7 +10,7 @@ class EmployeeInfo(BaseModel):
 
 
 class CalendarEvent(BaseModel):
-    type: str  # "vacation" or "business_trip"
+    type: Literal['vacation', 'business_trip']  # "vacation" or "business_trip"
     start: date
     end: date
 
