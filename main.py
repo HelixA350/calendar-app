@@ -7,7 +7,7 @@ from app.database import create_tables
 create_tables()
 
 app = FastAPI(
-    title="Work and Vacation Planning API",
+    title="OKR REINCARNATION",
     version="1.0.3",
     description="Простое API для получения календаря отпусков/командировок и ежедневной загрузки сотрудников.",
     root_path="/api/v1"

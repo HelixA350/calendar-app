@@ -49,7 +49,7 @@ class DailyWorkload(Base):
 
 
 # -- Database setup --
-DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///./workload_calendar.db")
+DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///db/workload_calendar.db")
 
 engine = create_engine(DATABASE_URL, connect_args={"check_same_thread": False})
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)

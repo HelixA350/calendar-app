@@ -1,6 +1,6 @@
 [
   {
     "type": "sqlite",
-    "path": "c:\\Users\\Aleksandr\\Documents\\ITR\\calendar-back\\calendar-app\\workload_calendar.db"
+    "path": "c:\\Users\\Aleksandr\\Documents\\ITR\\calendar-back\\calendar-app\\db\\workload_calendar.db"
   }
 ]
