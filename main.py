@@ -10,7 +10,7 @@ app = FastAPI(
     title="Work and Vacation Planning API",
     version="1.0.3",
     description="Простое API для получения календаря отпусков/командировок и ежедневной загрузки сотрудников.",
-    openapi_prefix="/api/v1"
+    root_path="/api/v1"
 )
 
 # Include API routes
