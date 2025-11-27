@@ -15,6 +15,13 @@ class CalendarEvent(BaseModel):
     end: date
 
 
+class CreateCalendarEvent(BaseModel):
+    employee_id: int
+    type: Literal['vacation', 'business_trip']  # "vacation" or "business_trip"
+    start: date
+    end: date
+
+
 class DailyWorkload(BaseModel):
     date: date
     percent: float

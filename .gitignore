@@ -1,34 +1,29 @@
 ```
-# Database files
-*.db
-
-# Environment files
-.env
-.env.local
-*.env.*
+# Compiled and build artifacts
+*.pyc
+__pycache__/
+*.o
+*.obj
 
 # Dependencies
-venv/
 .venv/
-__pycache__/
-*.pyc
-*.pyo
-*.pyd
+venv/
+node_modules/
 
-# Logs
+# Logs and temp files
 *.log
+*.tmp
+*.swp
+
+# Environment
+.env
+.env.local
+.env.*
 
 # Editors
 .vscode/
 .idea/
-*.swp
-*.swo
 
-# Build artifacts
-dist/
-build/
-*.egg-info/
-
-# scripts
-populate.py
+# Original rules preserved
+*.log
 ```
