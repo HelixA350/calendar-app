@@ -16,9 +16,8 @@ jobs:
       with:
         username: ${{ secrets.DOCKERHUB_USERNAME }}
         password: ${{ secrets.DOCKERHUB_TOKEN }}
-        
+
     - name: Build and Push the Docker image
-      run: 
+      run: |
         docker build . --tag helix350/calendar-back:latest
         docker push helix350/calendar-back:latest
-      
