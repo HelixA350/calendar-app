@@ -19,5 +19,8 @@ jobs:
 
     - name: Build and Push the Docker image
       run: |
-        docker build . --tag helix350/calendar-back:latest
-        docker push helix350/calendar-back:latest
+          IMAGE=helix350/calendar-back
+          TAG=${{ github.sha }}
+          docker build -t $IMAGE:$TAG -t $IMAGE:latest .
+          docker push $IMAGE:$TAG
+          docker push $IMAGE:latest
