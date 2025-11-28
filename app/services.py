@@ -5,10 +5,6 @@ from app.database import get_db, Employee, CalendarEvent, DailyWorkload
 from sqlalchemy.orm import Session
 from sqlalchemy import and_
 
-
-
-
-
 class CalendarService:
     @staticmethod
     def get_calendar(db: Session, start_date: date, end_date: date) -> List[CalendarResponseItem]:
