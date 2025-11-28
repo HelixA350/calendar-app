@@ -19,6 +19,15 @@ class DailyWorkload(BaseModel):
     date: date
     percent: float
 
+class CreateCalendarEvent(BaseModel):
+    employee_id: int
+    type: Literal['vacation', 'business_trip']  # "vacation" or "business_trip"
+    start: date
+    end: date
+
+class CreateCalendarEventResponse(BaseModel):
+    id: int
+
 
 # Response models
 class CalendarResponseItem(BaseModel):

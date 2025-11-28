@@ -1,6 +1,6 @@
 from datetime import date, timedelta
 from typing import List, Dict, Optional
-from app.models import EmployeeInfo, CalendarEvent as ModelCalendarEvent, DailyWorkload as ModelDailyWorkload, CalendarResponseItem, WorkloadResponseItem, WorkloadResponse
+from app.models import EmployeeInfo, CreateCalendarEvent, CalendarEvent as ModelCalendarEvent, DailyWorkload as ModelDailyWorkload, CalendarResponseItem, WorkloadResponseItem, WorkloadResponse
 from app.database import get_db, Employee, CalendarEvent, DailyWorkload
 from sqlalchemy.orm import Session
 from sqlalchemy import and_
@@ -55,7 +55,40 @@ class CalendarService:
         
         return result
 
+    @staticmethod
+    def create_event(db: Session, event_data: CreateCalendarEvent) -> CalendarEvent:
+        """
+        Create a new calendar event in the database
+        """
+        # Validate date range
+        if event_data.start > event_data.end:
+            raise ValueError("Start date cannot be after end date")
 
+        # Check for overlapping events for the same employee
+        existing_events = db.query(CalendarEvent).filter(
+            and_(
+                CalendarEvent.employee_id == event_data.employee_id,
+                CalendarEvent.start_date <= event_data.end,
+                CalendarEvent.end_date >= event_data.start
+            )
+        ).all()
+
+        if existing_events:
+            raise ValueError(f"Employee already has an event during this period: {event_data.start} to {event_data.end}")
+
+        # Create new event
+        db_event = CalendarEvent(
+            employee_id=event_data.employee_id,
+            event_type=event_data.type,
+            start_date=event_data.start,
+            end_date=event_data.end
+        )
+
+        db.add(db_event)
+        db.commit()
+        db.refresh(db_event)
+
+        return db_event
 class WorkloadService:
     @staticmethod
     def get_workload(db: Session, start_date: date, end_date: date) -> WorkloadResponse:
