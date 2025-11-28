@@ -7,6 +7,12 @@ class EmployeeInfo(BaseModel):
     id: int
     full_name: str
 
+class CreateEmployee(BaseModel):
+    full_name: str
+
+class CreateEmployeeResponse(BaseModel):
+    id: int
+
 
 class CalendarEvent(BaseModel):
     type: Literal['vacation', 'business_trip']  # "vacation" or "business_trip"

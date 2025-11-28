@@ -1,8 +1,8 @@
 from datetime import date
 from fastapi import APIRouter, HTTPException, Query, Depends
 
-from app.models import CalendarResponseItem, WorkloadResponse, CreateCalendarEvent, CreateCalendarEventResponse
-from app.services import CalendarService, WorkloadService
+from app.models import *
+from app.services import *
 from app.database import get_db
 from sqlalchemy.orm import Session
 
@@ -52,5 +52,17 @@ async def create_event(
     try:
         result = CalendarService.create_event(db, event_data)
         return CreateCalendarEventResponse(id=result.id)
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+    
+@router.post('/employees', response_model=CreateEmployeeResponse)
+async def create_employee(
+    user_data: CreateEmployee,
+    db: Session = Depends(get_db)
+):
+    """Создать нового пользователя"""
+    try:
+        result = EmployeeService.create_employee(db, user_data)
+        return CreateEmployeeResponse(id=result.id)
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))

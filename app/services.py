@@ -1,6 +1,6 @@
 from datetime import date, timedelta
 from typing import List, Dict, Optional
-from app.models import EmployeeInfo, CreateCalendarEvent, CalendarEvent as ModelCalendarEvent, DailyWorkload as ModelDailyWorkload, CalendarResponseItem, WorkloadResponseItem, WorkloadResponse
+from app.models import *
 from app.database import get_db, Employee, CalendarEvent, DailyWorkload
 from sqlalchemy.orm import Session
 from sqlalchemy import and_
@@ -160,3 +160,18 @@ class WorkloadService:
         total_workload.sort(key=lambda x: x.date)
         
         return WorkloadResponse(employees=employees_workload, total=total_workload)
+    
+class EmployeeService:
+    @staticmethod
+    def create_employee(db: Session, employee_data: CreateEmployee) -> Employee:
+        """
+        Создает нового сотрубника в базе данных
+        """
+        db_employee = Employee(
+            full_name=employee_data.full_name,
+        )
+        db.add(db_employee)
+        db.commit()
+        db.refresh(db_employee)
+        return db_employee
+    
