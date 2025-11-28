@@ -3,7 +3,6 @@ from typing import List
 from pydantic import BaseModel
 from typing import Literal
 
-
 class EmployeeInfo(BaseModel):
     id: int
     full_name: str
