@@ -1,8 +1,9 @@
 from datetime import date, timedelta
 from typing import List, Dict, Optional
-from app.models import *
+from app.models import EmployeeInfo, CreateCalendarEvent, CalendarEvent as ModelCalendarEvent, DailyWorkload as ModelDailyWorkload, CalendarResponseItem, WorkloadResponseItem, WorkloadResponse
 from app.database import get_db, Employee, CalendarEvent, DailyWorkload
 from sqlalchemy.orm import Session
+from app.models import CreateEmployee
 from sqlalchemy import and_
 
 class CalendarService:
@@ -174,4 +175,3 @@ class EmployeeService:
         db.commit()
         db.refresh(db_employee)
         return db_employee
-    
