@@ -1,11 +1,20 @@
 version: '3.8'
 services:
-  app:
+  backend:
     build: .
     ports:
       - "8000:8000"
     volumes:
       - db_volume:/app/db
+
+  front:
+    image: maksimkim005/calendar-front
+    ports:
+      - "8090:80"
+    environment:
+      - API_BASE=http://localhost:8000/api/v1
+    depends_on:
+      - backend
 
 volumes:
   db_volume:
