@@ -55,6 +55,59 @@ async def create_event(
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
     
+
+@router.delete("/events/{event_id}")
+async def delete_event(
+    event_id: int,
+    db: Session = Depends(get_db)
+):
+    """
+    Удалить событие календаря по ID
+    
+    Args:
+        event_id: ID события для удаления
+    """
+    try:
+        success = CalendarService.delete_event(db, CalendarEventDelete(event_id=event_id))
+        if not success:
+            raise HTTPException(status_code=404, detail=f"Событие с ID {event_id} не найдено")
+        return {"message": "Событие успешно удалено", "event_id": event_id}
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+
+@router.put("/events/{event_id}/dates")
+async def update_event_dates(
+    event_id: int,
+    update_data: UpdateCalendarEventDates,
+    db: Session = Depends(get_db)
+):
+    """
+    Обновить даты события календаря
+    
+    Args:
+        event_id: ID события для обновления
+        update_data: Новые даты начала и окончания
+    """
+    try:
+        updated_event = CalendarService.update_event_dates(
+            db,
+            CalendarEventUpdateDates(
+                event_id=event_id,
+                new_start_date=update_data.new_start_date,
+                new_end_date=update_data.new_end_date
+        ))
+        if not updated_event:
+            raise HTTPException(status_code=404, detail=f"Событие с ID {event_id} не найдено")
+        return UpdateEventResponse(
+            event_id = updated_event.id,
+            start_date = updated_event.start_date,
+            end_date = updated_event.end_date,
+        )
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+    
 @router.post('/employees', response_model=CreateEmployeeResponse)
 async def create_employee(
     user_data: CreateEmployee,

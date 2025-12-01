@@ -3,7 +3,7 @@ from typing import List, Dict, Optional
 from app.models import EmployeeInfo, CreateCalendarEvent, CalendarEvent as ModelCalendarEvent, DailyWorkload as ModelDailyWorkload, CalendarResponseItem, WorkloadResponseItem, WorkloadResponse
 from app.database import get_db, Employee, CalendarEvent, DailyWorkload
 from sqlalchemy.orm import Session
-from app.models import CreateEmployee
+from app.models import CreateEmployee, CalendarEventDelete, CalendarEventUpdateDates
 from sqlalchemy import and_
 
 class CalendarService:
@@ -86,6 +86,60 @@ class CalendarService:
         db.refresh(db_event)
 
         return db_event
+    
+    def delete_event(
+        db: Session, 
+        delete_data: CalendarEventDelete
+    ) -> bool:
+        """
+        Удаление события календаря по ID
+        """
+        # Находим событие по ID
+        event = db.query(CalendarEvent).filter(
+            CalendarEvent.id == delete_data.event_id
+        ).first()
+        
+        if not event:
+            return False
+        
+        # Удаляем событие
+        db.delete(event)
+        db.commit()
+        
+        return True
+    
+    def update_event_dates(
+        db: Session, 
+        update_data: CalendarEventUpdateDates
+    ) -> CalendarEvent:
+        """
+        Обновление дат события календаря, возвращает обновленное событие
+        """
+        # Находим событие по ID
+        event = db.query(CalendarEvent).filter(
+            CalendarEvent.id == update_data.event_id
+        ).first()
+        
+        if not event:
+            raise ValueError("Событие не найдено")
+        
+        # Определяем новые даты, используя переданные или существующие
+        start_date = update_data.new_start_date or event.start_date
+        end_date = update_data.new_end_date or event.end_date
+        
+        # Проверяем валидность
+        if end_date < start_date:
+            raise ValueError("Дата окончания не может быть раньше даты начала")
+        
+        # Обновляем если изменилось
+        if start_date != event.start_date or end_date != event.end_date:
+            event.start_date = start_date
+            event.end_date = end_date
+            db.commit()
+            db.refresh(event)
+        
+        return event
+
 class WorkloadService:
     @staticmethod
     def get_workload(db: Session, start_date: date, end_date: date) -> WorkloadResponse:
