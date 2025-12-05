@@ -1,6 +1,6 @@
 from datetime import date
 from typing import List
-from pydantic import BaseModel
+from pydantic import BaseModel, RootModel
 from typing import Literal, Optional
 
 class EmployeeInfo(BaseModel):
@@ -15,6 +15,7 @@ class CreateEmployeeResponse(BaseModel):
 
 
 class CalendarEvent(BaseModel):
+    id: int
     type: Literal['vacation', 'business_trip']  # "vacation" or "business_trip"
     start: date
     end: date
@@ -65,3 +66,9 @@ class WorkloadResponseItem(BaseModel):
 class WorkloadResponse(BaseModel):
     employees: List[WorkloadResponseItem]
     total: List[DailyWorkload]
+
+class DepartmentsResponse(RootModel):
+    root: List[str]
+
+class GetemployeeResponse(RootModel):
+    root: List[EmployeeInfo]

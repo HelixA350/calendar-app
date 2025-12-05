@@ -37,6 +37,7 @@ class CalendarService:
             
             # Convert database event to model event
             model_event = ModelCalendarEvent(
+                id=event.id,
                 type=event.event_type,
                 start=event.start_date,
                 end=event.end_date

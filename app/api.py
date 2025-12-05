@@ -107,15 +107,13 @@ async def update_event_dates(
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
 
-    
-@router.post('/employees', response_model=CreateEmployeeResponse)
-async def create_employee(
-    user_data: CreateEmployee,
-    db: Session = Depends(get_db)
+@router.get('/departments', response_model=DepartmentsResponse)
+def get_departments():
+    pass
+
+@router.get('/employees', response_model=GetemployeeResponse)
+def get_employees(
+    department = Query(..., description='Название отдела, для которого надо получить сотрудников')
 ):
-    """Создать нового пользователя"""
-    try:
-        result = EmployeeService.create_employee(db, user_data)
-        return CreateEmployeeResponse(id=result.id)
-    except ValueError as e:
-        raise HTTPException(status_code=400, detail=str(e))
+    pass
+
