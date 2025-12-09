@@ -7,6 +7,7 @@ from app.database import get_db
 from sqlalchemy.orm import Session
 
 
+
 router = APIRouter()
 
 
@@ -76,7 +77,7 @@ async def delete_event(
         raise HTTPException(status_code=400, detail=str(e))
 
 
-@router.put("/events/{event_id}/dates")
+@router.put("/events/{event_id}")
 async def update_event_dates(
     event_id: int,
     update_data: UpdateCalendarEventDates,
@@ -90,12 +91,13 @@ async def update_event_dates(
         update_data: Новые даты начала и окончания
     """
     try:
-        updated_event = CalendarService.update_event_dates(
+        updated_event = CalendarService.update_event(
             db,
             CalendarEventUpdateDates(
                 event_id=event_id,
                 new_start_date=update_data.new_start_date,
-                new_end_date=update_data.new_end_date
+                new_end_date=update_data.new_end_date,
+                new_level=update_data.new_level,
         ))
         if not updated_event:
             raise HTTPException(status_code=404, detail=f"Событие с ID {event_id} не найдено")
@@ -108,12 +110,28 @@ async def update_event_dates(
         raise HTTPException(status_code=400, detail=str(e))
 
 @router.get('/departments', response_model=DepartmentsResponse)
-def get_departments():
-    pass
+def get_departments(db: Session = Depends(get_db)):
+    data = DepartmentService.get_department_names(db)
+    return DepartmentsResponse(
+        data
+    )
 
 @router.get('/employees', response_model=GetemployeeResponse)
 def get_employees(
-    department = Query(..., description='Название отдела, для которого надо получить сотрудников')
+    department = Query(default=None, description='Название отдела, для которого надо получить сотрудников'),
+    db: Session = Depends(get_db)
 ):
-    pass
+    data = EmployeeService.get_employees(db, department)
+    return GetemployeeResponse(
+        data
+    )
+
+@router.patch('/data')
+def update_data(db: Session = Depends(get_db)):
+    """Обновляет данные из битрикса"""
+    a = BitrixService(db).sync_with_bitrix()
+    return a
+
+
+
 
