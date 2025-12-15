@@ -70,8 +70,17 @@ class WorkloadResponse(BaseModel):
     employees: List[WorkloadResponseItem]
     total: List[DailyWorkload]
 
+class DepartmentInfo(BaseModel):
+    id: int
+    name: str
+
 class DepartmentsResponse(RootModel):
-    root: List[str]
+    root: List[DepartmentInfo]
+
+class EmployeeDepInfo(BaseModel):
+    id: int
+    full_name: str
+    department_id: List[int]
 
 class GetemployeeResponse(RootModel):
-    root: List[EmployeeInfo]
+    root: List[EmployeeDepInfo]

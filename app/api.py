@@ -111,20 +111,18 @@ async def update_event_dates(
 
 @router.get('/departments', response_model=DepartmentsResponse)
 def get_departments(db: Session = Depends(get_db)):
-    data = DepartmentService.get_department_names(db)
+    data = DepartmentService.get_departments(db)
     return DepartmentsResponse(
         data
     )
 
 @router.get('/employees', response_model=GetemployeeResponse)
 def get_employees(
-    department = Query(default=None, description='Название отдела, для которого надо получить сотрудников'),
+    department_id = Query(default=None, description='ID отдела, для которого надо получить сотрудников'),
     db: Session = Depends(get_db)
 ):
-    data = EmployeeService.get_employees(db, department)
-    return GetemployeeResponse(
-        data
-    )
+    data = EmployeeService.get_employees_with_departments(db, department_id)
+    return data
 
 @router.patch('/data')
 def update_data(db: Session = Depends(get_db)):

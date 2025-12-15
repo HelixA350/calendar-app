@@ -1,6 +1,6 @@
 from datetime import date, timedelta
 from typing import List, Dict, Optional
-from app.models import GetemployeeResponse, EmployeeInfo, CreateCalendarEvent, CalendarEvent as ModelCalendarEvent, DailyWorkload as ModelDailyWorkload, CalendarResponseItem, WorkloadResponseItem, WorkloadResponse
+from app.models import GetemployeeResponse, EmployeeInfo, CreateCalendarEvent, CalendarEvent as ModelCalendarEvent, DailyWorkload as ModelDailyWorkload, CalendarResponseItem, WorkloadResponseItem, WorkloadResponse, EmployeeDepInfo
 from app.database import get_db, Employee, CalendarEvent, DailyWorkload,Department
 from sqlalchemy.orm import Session
 from sqlalchemy import select
@@ -250,30 +250,34 @@ class EmployeeService:
         return db_employee
     
     @staticmethod
-    def get_employees(db: Session, department: Optional[str] = None) -> List[EmployeeInfo]:
-        if department is not None:
-            stmt = (
-                select(Employee)
-                .join(Employee.departments)
-                .where(Department.dep_name == department)
-            )
-            employees = db.execute(stmt).scalars().all()
-        else:
-            employees = db.execute(select(Employee)).scalars().all()
-        
-        return [
-            EmployeeInfo(
+    def get_employees_with_departments(db: Session, department_id: Optional[int] = None) -> GetemployeeResponse:
+        query = db.query(Employee).options(joinedload(Employee.departments))
+
+        if department_id is not None:
+            # Фильтруем сотрудников, принадлежащих указанному отделу
+            query = query.join(Employee.departments).filter(Department.id == department_id)
+
+        employees = query.all()
+
+        result = [
+            EmployeeDepInfo(
                 id=emp.id,
                 full_name=emp.full_name,
+                department_id=[dep.id for dep in emp.departments]
             )
             for emp in employees
         ]
+
+        return GetemployeeResponse(root=result)
     
 class DepartmentService:
     @staticmethod
-    def get_department_names(db: Session) -> List[str]:
+    def get_departments(db: Session) -> List[str]:
         data = db.query(Department).all()
-        return [item.dep_name for item in data]
+        return [{
+            'name': item.dep_name,
+            'id': item.id,
+        } for item in data]
     
 class BitrixService:
     def __init__(self, db: Session):
