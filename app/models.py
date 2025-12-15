@@ -19,6 +19,7 @@ class CalendarEvent(BaseModel):
     type: Literal['vacation', 'business_trip']  # "vacation" or "business_trip"
     start: date
     end: date
+    level: str
 
 class CalendarEventDelete(BaseModel):
     event_id: int
@@ -34,9 +35,13 @@ class CalendarEventUpdateDates(BaseModel):
     new_end_date: Optional[date] = None
     new_level: Optional[Literal['saved', 'approved']] = None
 
+class DeleteEventResponse(BaseModel):
+    message: str = 'Событие успешно удалено'
+    event_id: int
+
 class UpdateEventResponse(BaseModel):
     event_id: int
-    status: str = 'Даты успешно обновлены'
+    status: str = 'Данные о событии успешно обновлены'
     start_date: date
     end_date: date
 

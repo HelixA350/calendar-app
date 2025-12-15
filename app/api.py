@@ -57,7 +57,7 @@ async def create_event(
         raise HTTPException(status_code=400, detail=str(e))
     
 
-@router.delete("/events/{event_id}")
+@router.delete("/events/{event_id}", response_model=DeleteEventResponse)
 async def delete_event(
     event_id: int,
     db: Session = Depends(get_db)
@@ -72,7 +72,7 @@ async def delete_event(
         success = CalendarService.delete_event(db, CalendarEventDelete(event_id=event_id))
         if not success:
             raise HTTPException(status_code=404, detail=f"Событие с ID {event_id} не найдено")
-        return {"message": "Событие успешно удалено", "event_id": event_id}
+        return DeleteEventResponse(event_id=event_id)
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
 

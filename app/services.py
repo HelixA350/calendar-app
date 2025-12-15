@@ -44,7 +44,8 @@ class CalendarService:
                 id=event.id,
                 type=event.event_type,
                 start=event.start_date,
-                end=event.end_date
+                end=event.end_date,
+                level = event.level,
             )
             employee_events[employee.id]['events'].append(model_event)
         
