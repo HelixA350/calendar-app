@@ -28,7 +28,5 @@ __pycache__/
 dist/
 build/
 *.egg-info/
-
-# scripts
-populate.py
+docker-compose.yml
 ```

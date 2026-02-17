@@ -1,11 +1,44 @@
 version: '3.8'
 services:
-  app:
+  backend:
     build: .
+    volumes:
+      - migrations:/app/alembic/versions
     ports:
       - "8000:8000"
+    environment:
+      BITRIX_TOKEN: d3ohvmqzep37fa1p
+      DATABASE_URL: postgresql://user:password@postgres:5432/db
+    depends_on:
+      - postgres
+    networks:
+      - calendar-net
+
+  frontend:
+    image: maksimkim005/calendar-front:latest
+    ports:
+      - "8090:80"
+    environment:
+      - API_BASE=/api/v1
+    depends_on:
+      - backend
+    networks:
+      - calendar-net
+
+  postgres:
+    image: postgres:16
+    restart: always
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: db
     volumes:
-      - db_volume:/app/db
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - calendar-net
 
 volumes:
-  db_volume:
+  postgres_data:
+  migrations:
+networks:
+  calendar-net:

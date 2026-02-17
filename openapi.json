@@ -1,0 +1,575 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Calendar API",
+    "description": "Простое API для получения календаря отпусков/командировок и ежедневной загрузки сотрудников.",
+    "version": "1.0.3"
+  },
+  "paths": {
+    "/api/v1/calendar": {
+      "get": {
+        "summary": "Get Calendar",
+        "description": "Получить календарь отпусков и командировок",
+        "operationId": "get_calendar_api_v1_calendar_get",
+        "parameters": [
+          {
+            "name": "start_date",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "date",
+              "description": "Дата начала периода (YYYY-MM-DD)",
+              "title": "Start Date"
+            },
+            "description": "Дата начала периода (YYYY-MM-DD)"
+          },
+          {
+            "name": "end_date",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "date",
+              "description": "Дата окончания периода (YYYY-MM-DD)",
+              "title": "End Date"
+            },
+            "description": "Дата окончания периода (YYYY-MM-DD)"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/CalendarResponseItem"
+                  },
+                  "title": "Response Get Calendar Api V1 Calendar Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/workload": {
+      "get": {
+        "summary": "Get Workload",
+        "description": "Получить ежедневную загрузку сотрудников",
+        "operationId": "get_workload_api_v1_workload_get",
+        "parameters": [
+          {
+            "name": "start_date",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "date",
+              "description": "Дата начала периода (YYYY-MM-DD)",
+              "title": "Start Date"
+            },
+            "description": "Дата начала периода (YYYY-MM-DD)"
+          },
+          {
+            "name": "end_date",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "date",
+              "description": "Дата окончания периода (YYYY-MM-DD)",
+              "title": "End Date"
+            },
+            "description": "Дата окончания периода (YYYY-MM-DD)"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WorkloadResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/events": {
+      "post": {
+        "summary": "Create Event",
+        "description": "Создать новое событие (отпуск или командировка)",
+        "operationId": "create_event_api_v1_events_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateCalendarEvent"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreateCalendarEventResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/events/{event_id}": {
+      "delete": {
+        "summary": "Delete Event",
+        "description": "Удалить событие календаря по ID\n\nArgs:\n    event_id: ID события для удаления",
+        "operationId": "delete_event_api_v1_events__event_id__delete",
+        "parameters": [
+          {
+            "name": "event_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Event Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/events/{event_id}/dates": {
+      "put": {
+        "summary": "Update Event Dates",
+        "description": "Обновить даты события календаря\n\nArgs:\n    event_id: ID события для обновления\n    update_data: Новые даты начала и окончания",
+        "operationId": "update_event_dates_api_v1_events__event_id__dates_put",
+        "parameters": [
+          {
+            "name": "event_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Event Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateCalendarEventDates"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/employees": {
+      "post": {
+        "summary": "Create Employee",
+        "description": "Создать нового пользователя",
+        "operationId": "create_employee_api_v1_employees_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateEmployee"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreateEmployeeResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "CalendarEvent": {
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "vacation",
+              "business_trip"
+            ],
+            "title": "Type"
+          },
+          "start": {
+            "type": "string",
+            "format": "date",
+            "title": "Start"
+          },
+          "end": {
+            "type": "string",
+            "format": "date",
+            "title": "End"
+          }
+        },
+        "type": "object",
+        "required": [
+          "type",
+          "start",
+          "end"
+        ],
+        "title": "CalendarEvent"
+      },
+      "CalendarResponseItem": {
+        "properties": {
+          "employee": {
+            "$ref": "#/components/schemas/EmployeeInfo"
+          },
+          "events": {
+            "items": {
+              "$ref": "#/components/schemas/CalendarEvent"
+            },
+            "type": "array",
+            "title": "Events"
+          }
+        },
+        "type": "object",
+        "required": [
+          "employee",
+          "events"
+        ],
+        "title": "CalendarResponseItem"
+      },
+      "CreateCalendarEvent": {
+        "properties": {
+          "employee_id": {
+            "type": "integer",
+            "title": "Employee Id"
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "vacation",
+              "business_trip"
+            ],
+            "title": "Type"
+          },
+          "start": {
+            "type": "string",
+            "format": "date",
+            "title": "Start"
+          },
+          "end": {
+            "type": "string",
+            "format": "date",
+            "title": "End"
+          }
+        },
+        "type": "object",
+        "required": [
+          "employee_id",
+          "type",
+          "start",
+          "end"
+        ],
+        "title": "CreateCalendarEvent"
+      },
+      "CreateCalendarEventResponse": {
+        "properties": {
+          "id": {
+            "type": "integer",
+            "title": "Id"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id"
+        ],
+        "title": "CreateCalendarEventResponse"
+      },
+      "CreateEmployee": {
+        "properties": {
+          "full_name": {
+            "type": "string",
+            "title": "Full Name"
+          }
+        },
+        "type": "object",
+        "required": [
+          "full_name"
+        ],
+        "title": "CreateEmployee"
+      },
+      "CreateEmployeeResponse": {
+        "properties": {
+          "id": {
+            "type": "integer",
+            "title": "Id"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id"
+        ],
+        "title": "CreateEmployeeResponse"
+      },
+      "DailyWorkload": {
+        "properties": {
+          "date": {
+            "type": "string",
+            "format": "date",
+            "title": "Date"
+          },
+          "percent": {
+            "type": "number",
+            "title": "Percent"
+          }
+        },
+        "type": "object",
+        "required": [
+          "date",
+          "percent"
+        ],
+        "title": "DailyWorkload"
+      },
+      "EmployeeInfo": {
+        "properties": {
+          "id": {
+            "type": "integer",
+            "title": "Id"
+          },
+          "full_name": {
+            "type": "string",
+            "title": "Full Name"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "full_name"
+        ],
+        "title": "EmployeeInfo"
+      },
+      "HTTPValidationError": {
+        "properties": {
+          "detail": {
+            "items": {
+              "$ref": "#/components/schemas/ValidationError"
+            },
+            "type": "array",
+            "title": "Detail"
+          }
+        },
+        "type": "object",
+        "title": "HTTPValidationError"
+      },
+      "UpdateCalendarEventDates": {
+        "properties": {
+          "new_start_date": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "New Start Date"
+          },
+          "new_end_date": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "New End Date"
+          }
+        },
+        "type": "object",
+        "title": "UpdateCalendarEventDates"
+      },
+      "ValidationError": {
+        "properties": {
+          "loc": {
+            "items": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "integer"
+                }
+              ]
+            },
+            "type": "array",
+            "title": "Location"
+          },
+          "msg": {
+            "type": "string",
+            "title": "Message"
+          },
+          "type": {
+            "type": "string",
+            "title": "Error Type"
+          }
+        },
+        "type": "object",
+        "required": [
+          "loc",
+          "msg",
+          "type"
+        ],
+        "title": "ValidationError"
+      },
+      "WorkloadResponse": {
+        "properties": {
+          "employees": {
+            "items": {
+              "$ref": "#/components/schemas/WorkloadResponseItem"
+            },
+            "type": "array",
+            "title": "Employees"
+          },
+          "total": {
+            "items": {
+              "$ref": "#/components/schemas/DailyWorkload"
+            },
+            "type": "array",
+            "title": "Total"
+          }
+        },
+        "type": "object",
+        "required": [
+          "employees",
+          "total"
+        ],
+        "title": "WorkloadResponse"
+      },
+      "WorkloadResponseItem": {
+        "properties": {
+          "employee": {
+            "$ref": "#/components/schemas/EmployeeInfo"
+          },
+          "workload": {
+            "items": {
+              "$ref": "#/components/schemas/DailyWorkload"
+            },
+            "type": "array",
+            "title": "Workload"
+          }
+        },
+        "type": "object",
+        "required": [
+          "employee",
+          "workload"
+        ],
+        "title": "WorkloadResponseItem"
+      }
+    }
+  }
+}
