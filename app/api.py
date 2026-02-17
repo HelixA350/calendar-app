@@ -130,13 +130,14 @@ def update_data(db: Session = Depends(get_db)):
     a = BitrixService(db).sync_with_bitrix()
     return a
 
-@router.post('/auth')
+@router.get('/auth')
 def auth(
-    token: AuthToken,
+    token: str = Query(..., description="Authentication token"),
+    app_name: str = Query(..., description="Application name"),
     db: Session = Depends(get_db)
 ):
     """Авторизация пользователя"""
-    role = AuthService.check_role(token.auth_token, token.app_name)
+    role = AuthService.check_role(token, app_name)
     return {'role': role}
 
 @router.get('/documents')
