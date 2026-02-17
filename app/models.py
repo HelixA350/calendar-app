@@ -89,3 +89,7 @@ class EmployeeDepInfo(BaseModel):
 
 class GetemployeeResponse(RootModel):
     root: List[EmployeeDepInfo]
+
+class AuthToken(BaseModel):
+    auth_token: str
+    app_name: str

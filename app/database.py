@@ -74,6 +74,22 @@ class DailyWorkload(Base):
     employee = relationship("Employee", back_populates="daily_workloads")
 
 
+class History(Base):
+    __tablename__ = 'history'
+    
+    id = Column(Integer, primary_key=True, index=True)
+    employee_id = Column(Integer, ForeignKey('employees.id'), nullable=False)
+    event_type = Column(String, nullable=False)  # 'vacation' or 'business_trip'
+    date = Column(Date, nullable=False)
+    verdict = Column(Integer, nullable=False)  # 1 approve, 0 reject, -1 pending
+    level = Column(String, nullable=False)
+    participant_id = Column(Integer, ForeignKey('employees.id'), nullable=True)
+
+    # Relationship
+    employee = relationship("Employee", back_populates="history")
+    participant = relationship("Employee", foreign_keys=[participant_id])
+
+
 # -- Database setup --
 DATABASE_URL = "postgresql://user:password@postgres:5432/db"
 

@@ -434,3 +434,17 @@ class BitrixService:
                 break
 
         return all_data
+    
+
+class AuthService:
+    @staticmethod
+    def check_role(token, app):
+        try:
+            response = requests.get(
+                'http://10.100.50.37:8125/check_role', # HARDCODE - адрес сервиса авторизации
+                params={'auth_token': token, 'app_name': app}
+            )
+            response.raise_for_status()
+            return response.json().get('role')
+        except requests.exceptions.RequestException:
+            raise ValueError("Failed to check role")

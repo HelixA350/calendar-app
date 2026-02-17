@@ -130,6 +130,32 @@ def update_data(db: Session = Depends(get_db)):
     a = BitrixService(db).sync_with_bitrix()
     return a
 
+@router.post('/auth')
+def auth(
+    token: AuthToken,
+    db: Session = Depends(get_db)
+):
+    """Авторизация пользователя"""
+    role = AuthService.check_role(token.auth_token, token.app_name)
+    return {'role': role}
+
+@router.get('/documents')
+def get_documents(
+    db: Session = Depends(get_db)
+):
+    # TODO: Create document service
+    return {
+        'data': 'documents'
+    }
+
+@router.get('/history')
+def get_history(
+    db: Session = Depends(get_db)
+):
+    # TODO: Create history service
+    return {
+        'data': 'history'
+    }
 
 
 
