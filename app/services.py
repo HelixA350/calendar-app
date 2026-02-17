@@ -1,7 +1,7 @@
 from datetime import date, timedelta
 from typing import List, Dict, Optional
 from app.models import GetemployeeResponse, EmployeeInfo, CreateCalendarEvent, CalendarEvent as ModelCalendarEvent, DailyWorkload as ModelDailyWorkload, CalendarResponseItem, WorkloadResponseItem, WorkloadResponse, EmployeeDepInfo
-from app.database import get_db, Employee, CalendarEvent, DailyWorkload,Department
+from app.database import get_db, Employee, CalendarEvent, DailyWorkload, Department, History
 from sqlalchemy.orm import Session
 from sqlalchemy import select
 from app.models import CreateEmployee, CalendarEventDelete, CalendarEventUpdateDates
@@ -448,3 +448,22 @@ class AuthService:
             return response.json().get('role')
         except requests.exceptions.RequestException:
             raise ValueError("Failed to check role")
+        
+
+class HistoryService:
+    @staticmethod
+    def get_history(db: Session, employee_id: int):
+        history_entries = db.query(History).filter(History.employee_id == employee_id).all()
+        result = []
+        for entry in history_entries:
+            result.append({
+                'event_type': entry.event_type,
+                'date': entry.date,
+                'verdict': entry.verdict,
+                'level': entry.level,
+                'participant': {
+                    'id': entry.participant.id,
+                    'full_name': entry.participant.full_name
+                } if entry.participant else None
+            })
+        return result
